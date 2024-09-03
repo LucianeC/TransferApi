@@ -107,6 +107,6 @@ DocumentacaoAPi: Json doc Api
 ### Contato
 Se você tiver alguma dúvida ou sugestão, sinta-se à vontade para entrar em contato:
 
-Nome: Luciane Costa 
-lindedin: https://www.linkedin.com/in/luciane-costa24/
-GitHub: LucianeC
+- Nome: Luciane Costa 
+- lindedin: https://www.linkedin.com/in/luciane-costa24/
+- GitHub: LucianeC
