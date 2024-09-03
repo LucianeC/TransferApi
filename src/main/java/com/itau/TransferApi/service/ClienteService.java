@@ -24,8 +24,8 @@ public class ClienteService {
         // Verifica se o número da conta já existe
         Optional<Cliente> clienteExistente = clienteRepository.findByNumeroConta(cliente.getNumeroConta());
         if (clienteExistente.isPresent()) {
-            logger.error("Erro ao cadastrar cliente: Número da conta {} já existe.", cliente.getNumeroConta());
-            throw new IllegalArgumentException("Número da conta já existe.");
+            logger.error("Erro ao cadastrar cliente: Numero da conta {} ja existe.", cliente.getNumeroConta());
+            throw new IllegalArgumentException("Numero da conta ja existe.");
         }
 
         Cliente clienteSalvo = clienteRepository.save(cliente);
@@ -44,7 +44,7 @@ public class ClienteService {
         if (clienteOpt.isPresent()) {
             logger.info("Cliente encontrado: {}", clienteOpt.get().getId());
         } else {
-            logger.warn("Cliente com conta {} não encontrado.", numeroConta);
+            logger.warn("Cliente com conta {} nao encontrado.", numeroConta);
         }
         return clienteOpt;
     }

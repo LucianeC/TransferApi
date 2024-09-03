@@ -30,13 +30,25 @@ public class TransferenciaService {
         Optional<Cliente> clienteOrigemOpt = clienteRepository.findByNumeroConta(numeroContaOrigem);
         Optional<Cliente> clienteDestinoOpt = clienteRepository.findByNumeroConta(numeroContaDestino);
 
-        if (clienteOrigemOpt.isEmpty()) {
+        Transferencia transferencia = new Transferencia();
+        transferencia.setDataHora(LocalDateTime.now());
+        transferencia.setValor(valor);
+
+        if (clienteOrigemOpt.isPresent()) {
+            transferencia.setContaOrigem(clienteOrigemOpt.get());
+        } else {
             logger.error("Conta de origem nao encontrada: {}", numeroContaOrigem);
-            throw new IllegalArgumentException("Conta de origem nao encontrada.");
+            transferencia.setSucesso(false);
+            transferenciaRepository.save(transferencia);
+            throw new IllegalArgumentException("Conta de origem não encontrada.");
         }
 
-        if (clienteDestinoOpt.isEmpty()) {
+        if (clienteDestinoOpt.isPresent()) {
+            transferencia.setContaDestino(clienteDestinoOpt.get());
+        } else {
             logger.error("Conta de destino não encontrada: {}", numeroContaDestino);
+            transferencia.setSucesso(false);
+            transferenciaRepository.save(transferencia);
             throw new IllegalArgumentException("Conta de destino nao encontrada.");
         }
 
@@ -45,11 +57,15 @@ public class TransferenciaService {
 
         if (clienteOrigem.getSaldo() < valor) {
             logger.error("Saldo insuficiente na conta de origem: {}", numeroContaOrigem);
+            transferencia.setSucesso(false);
+            transferenciaRepository.save(transferencia);
             throw new IllegalArgumentException("Saldo insuficiente para realizar a transferencia.");
         }
 
         if (valor > 10000) {
             logger.error("Valor de transferencia excede o limite permitido: R$ {}", valor);
+            transferencia.setSucesso(false);
+            transferenciaRepository.save(transferencia);
             throw new IllegalArgumentException("Valor de transferencia excede o limite de R$ 10.000,00.");
         }
 
@@ -60,18 +76,12 @@ public class TransferenciaService {
         clienteRepository.save(clienteOrigem);
         clienteRepository.save(clienteDestino);
 
-        // Cria e salva a transferência
-        Transferencia transferencia = new Transferencia();
-        transferencia.setContaOrigem(clienteOrigem);
-        transferencia.setContaDestino(clienteDestino);
-        transferencia.setValor(valor);
-        transferencia.setDataHora(LocalDateTime.now());
+        // Marca a transferência como bem-sucedida
         transferencia.setSucesso(true);
+        transferenciaRepository.save(transferencia);
+        logger.info("Transferencia realizada com sucesso: {}", transferencia.getId());
 
-        Transferencia transferenciaSalva = transferenciaRepository.save(transferencia);
-        logger.info("Transferencia realizada com sucesso: {}", transferenciaSalva.getId());
-
-        return transferenciaSalva;
+        return transferencia;
     }
 
     public List<Transferencia> buscarTransferenciasPorNumeroConta(String numeroConta) {
