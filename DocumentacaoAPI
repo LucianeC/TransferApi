@@ -2,7 +2,6 @@
 // Para acessar de forma local com interface:
 // http://localhost:8080/swagger-ui.html
 
-
 {
   "openapi": "3.0.1",
   "info": {
